@@ -1,0 +1,76 @@
+groups:
+  - name: dotnet-app-alerts
+    rules:
+
+      - alert: AppDown
+        expr: up{job="dotnet-apps"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.app }} is down"
+          description: "{{ $labels.app }} on {{ $labels.instance }} has been unreachable for 30s."
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_received_total{code=~"5.."}[5m])) by (app)
+          /
+          sum(rate(http_requests_received_total[5m])) by (app)
+          > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx error rate on {{ $labels.app }}"
+          description: "More than 5% of requests to {{ $labels.app }} are failing with 5xx errors."
+
+      - alert: HighRequestLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le, app)
+          ) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High p95 latency on {{ $labels.app }}"
+          description: "{{ $labels.app }}'s 95th percentile request duration is above 1s."
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total{app!=""}[2m]) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.app }}"
+          description: "{{ $labels.app }} has been using over 90% CPU for 5+ minutes."
+
+      - alert: HighMemoryUsage
+        expr: process_working_set_bytes{app!=""} / 1024 / 1024 > 1024
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.app }}"
+          description: "{{ $labels.app }} is using over 1GB of working set memory."
+
+      - alert: TooManyActiveRequests
+        expr: sum(http_requests_in_progress{app!=""}) by (app) > 100
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Request backlog building on {{ $labels.app }}"
+          description: "{{ $labels.app }} has had 100+ in-progress requests for 3+ minutes — possible bottleneck downstream."
+
+  - name: infrastructure-alerts
+    rules:
+
+      - alert: PrometheusTargetMissing
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Target {{ $labels.instance }} has disappeared"
+          description: "A Prometheus scrape target has been missing for 5+ minutes. It may have been removed or crashed."

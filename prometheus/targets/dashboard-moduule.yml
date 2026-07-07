@@ -1,0 +1,5 @@
+- targets:
+    - host.docker.internal:5093
+  labels:
+    app: dashboard-module
+    env: development
