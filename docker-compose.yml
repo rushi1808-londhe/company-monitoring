@@ -19,6 +19,8 @@ services:
       - "--storage.tsdb.retention.time=30d"
     networks:
       - monitoring
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -38,7 +40,9 @@ services:
     container_name: postgres_exporter
     restart: unless-stopped
     environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:root@host.docker.internal:5433/collections?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres_app:root@host.docker.internal:5432/collections?sslmode=disable"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "9187:9187"
     networks:
