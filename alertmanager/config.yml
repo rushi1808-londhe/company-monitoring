@@ -2,7 +2,7 @@ global:
   smtp_smarthost: 'smtp.gmail.com:587'
   smtp_from: 'rushikeshdl18@gmail.com'
   smtp_auth_username: 'rushikeshdl18@gmail.com'
-  smtp_auth_password: 'bqlnilwuxhoajsll'   # the 16-char App Password, no spaces
+  smtp_auth_password: 'bodqucntemjgrbsr'   # the 16-char App Password, no spaces
   smtp_require_tls: true
 
 route:
@@ -22,7 +22,7 @@ route:
 receivers:
   - name: 'default-email'
     email_configs:
-      - to: 'rushikeshdl18@gmail.com,07.pandeyamit@gmail.com'
+      - to: 'rushikeshdl18@gmail.com'
         send_resolved: true
         headers:
           subject: '{{ if eq .Status "firing" }}🔴 FIRING{{ else }}✅ RESOLVED{{ end }}: {{ .CommonLabels.alertname }} ({{ .CommonLabels.app }})'
