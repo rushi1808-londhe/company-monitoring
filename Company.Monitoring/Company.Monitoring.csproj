@@ -4,6 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+
+    <PackageId>Company.Monitoring</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>SBFC Finance / Dattatray</Authors>
+    <Description>Shared Prometheus/Grafana/Loki logging and metrics extensions for company .NET projects.</Description>
+    <RepositoryUrl>https://github.com/rushi1808-londhe/company-monitoring</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
